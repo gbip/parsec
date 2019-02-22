@@ -1,5 +1,7 @@
 default: parsec
 
+parsec : src/parsec.native
+
 test : src/test.native
 
 %.native: 
