@@ -14,16 +14,20 @@ let test_parsec_or text result_expected ctx =
     ()
 
 
-let integration_tests =
+let parser_combinator_or_test =
   "Integration test">:::
-      ["Graph1">:: (test_parsec_or ['a'] (Some [] ));
-   "Graph13">:: (test_parsec_or ['b'] (Some [] ));
-   "Graph13">:: (test_parsec_or ['a';'b'] (Some ['b'] ));
-   "Graph13">:: (test_parsec_or ['b'; 'a'] (Some ['a'] ))
+      ["Parsec">:: (test_parsec_or ['a'] (Some [] ));
+   "Parsec">:: (test_parsec_or ['b'] (Some [] ));
+   "Parsec">:: (test_parsec_or ['a';'b'] (Some ['b'] ));
+   "Parsec">:: (test_parsec_or ['b'; 'a'] (Some ['a'] ));
+   "Parsec">:: (test_parsec_or ['c'; 'a'] None);
+   "Parsec">:: (test_parsec_or ['a'; 'c'] (Some ['c'] ));
+   "Parsec">:: (test_parsec_or ['c'; 'c'] None);
+   "Parsec">:: (test_parsec_or [] None)
   ]
 ;;
 
 let () =
-  OUnit2.run_test_tt_main integration_tests
+  OUnit2.run_test_tt_main parser_combinator_or_test
 ;;
 
