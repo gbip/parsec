@@ -80,6 +80,10 @@ let test_parsec_concat text result_expected ctx =
   let () = OUnit2.assert_equal result result_expected in
     ()
 
+let test_parser prs text result_expected ctx =
+    let result = prs text in
+    let () = OUnit2.assert_equal result result_expected in
+    ()
 
 let parser_combinator_concat_test =
   "Integration test">:::
@@ -98,8 +102,27 @@ let parser_combinator_concat_test =
   ]
 ;;
 
+let parser_combinator_integration_test = 
+  "Integration test">:::
+    [
+        (* "ab" | "def" *)
+        "Parsec">:: (test_parser ((char_parser 'a' |.| char_parser 'b') |:| parser_def) ['a';'b';'k'] (Some ['k']));
+        "Parsec">:: (test_parser ((char_parser 'a' |.| char_parser 'b') |:| parser_def) ['d';'e';'f';'k'] (Some ['k']));
+        "Parsec">:: (test_parser ((char_parser 'a' |.| char_parser 'b') |:| parser_def) ['c';'e';'f';'k'] (None));
+        "Parsec">:: (test_parser ((char_parser 'a' |.| char_parser 'b') |:| parser_def) ['f';'b'] (None));
+
+        (* ( "a" | "b" ).( "def" | "c")  *)
+        "Parsec">:: (test_parser ((char_parser 'a' |:| char_parser 'b') |.| (parser_def |:| char_parser 'c')) ['a';'c'] (Some []));
+        "Parsec">:: (test_parser ((char_parser 'a' |:| char_parser 'b') |.| (parser_def |:| char_parser 'c')) ['b';'c'] (Some []));
+        "Parsec">:: (test_parser ((char_parser 'a' |:| char_parser 'b') |.| (parser_def |:| char_parser 'c')) ['a';'d';'e';'f'] (Some []));
+        "Parsec">:: (test_parser ((char_parser 'a' |:| char_parser 'b') |.| (parser_def |:| char_parser 'c')) ['b';'d';'e';'f'] (Some []))
+    ]
+;;
+
+
 let () =
   OUnit2.run_test_tt_main parser_combinator_or_test;
-  OUnit2.run_test_tt_main parser_combinator_concat_test
+  OUnit2.run_test_tt_main parser_combinator_concat_test;
+  OUnit2.run_test_tt_main parser_combinator_integration_test
 ;;
 
