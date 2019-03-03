@@ -24,3 +24,16 @@ let concat a b text =
 ;;
 let (|.|) a b = concat a b
 ;;
+
+
+let star a text =
+
+  let rec star_loop a following = match (a following) with
+    | Some t -> star_loop a t
+    | None -> Some following
+  in
+
+  match a text with
+    | Some t -> star_loop a t
+    | None -> None
+;;
