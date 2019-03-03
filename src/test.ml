@@ -80,11 +80,6 @@ let test_parsec_concat text result_expected ctx =
   let () = OUnit2.assert_equal result result_expected in
     ()
 
-let test_parser prs text result_expected ctx =
-    let result = prs text in
-    let () = OUnit2.assert_equal result result_expected in
-    ()
-
 let parser_combinator_concat_test =
   "Integration test">:::
   ["Parsec">:: (test_parsec_concat ['a'] (None));
@@ -102,6 +97,47 @@ let parser_combinator_concat_test =
   ]
 ;;
 
+
+
+(* Test de "star parse_a" ( qui doit reconnaître a(star) ) *)
+let test_parsec_star_a text result_expected ctx =
+  let parse_a = char_parser 'a' in
+  let result = star parse_a text in
+  let () = OUnit2.assert_equal result result_expected in
+    ()
+
+(* Test de "star parser_abc" ( qui doit reconnaître (abc)(star) ) *)
+let test_parsec_star_abc text result_expected ctx =
+  let result = star parser_abc text in
+  let () = OUnit2.assert_equal result result_expected in
+    ()
+
+let parser_combinator_star_test =
+  "Integration test">:::
+  ["Parsec">:: (test_parsec_star_a ['a'] (Some []) );
+   "Parsec">:: (test_parsec_star_a ['b'] None);
+   "Parsec">:: (test_parsec_star_a ['a';'b'] (Some ['b']) );
+   "Parsec">:: (test_parsec_star_a ['a'; 'a'; 'b'] (Some ['b']) );
+   "Parsec">:: (test_parsec_star_a ['a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'b'] (Some ['b']) );
+   "Parsec">:: (test_parsec_star_a ['b'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'b'] (None) );
+   "Parsec">:: (test_parsec_star_abc ['a'; 'b'; 'c'] (Some []) );
+   "Parsec">:: (test_parsec_star_abc ['a'; 'a'; 'b'] None );
+   "Parsec">:: (test_parsec_star_abc ['a'; 'b'; 'c'; 'a'; 'b'; 'c'; 'a'; 'b'; 'c'] (Some []) );
+   "Parsec">:: (test_parsec_star_abc ['a'; 'b'; 'd'; 'a'; 'b'; 'c'; 'a'; 'b'; 'c'; 'a'; 'b'; 'c'] None );
+   "Parsec">:: (test_parsec_star_abc ['a'; 'b'; 'c'; 'a'; 'b'; 'c'; 'a'; 'b'; 'd'; 'a'; 'b'; 'c'] (Some ['a'; 'b'; 'd'; 'a'; 'b'; 'c']) );
+  ]
+;;
+
+
+
+
+let test_parser prs text result_expected ctx =
+    let result = prs text in
+    let () = OUnit2.assert_equal result result_expected in
+    ()
+
+
+
 let parser_combinator_integration_test = 
   "Integration test">:::
     [
@@ -115,7 +151,18 @@ let parser_combinator_integration_test =
         "Parsec">:: (test_parser ((char_parser 'a' |:| char_parser 'b') |.| (parser_def |:| char_parser 'c')) ['a';'c'] (Some []));
         "Parsec">:: (test_parser ((char_parser 'a' |:| char_parser 'b') |.| (parser_def |:| char_parser 'c')) ['b';'c'] (Some []));
         "Parsec">:: (test_parser ((char_parser 'a' |:| char_parser 'b') |.| (parser_def |:| char_parser 'c')) ['a';'d';'e';'f'] (Some []));
-        "Parsec">:: (test_parser ((char_parser 'a' |:| char_parser 'b') |.| (parser_def |:| char_parser 'c')) ['b';'d';'e';'f'] (Some []))
+        "Parsec">:: (test_parser ((char_parser 'a' |:| char_parser 'b') |.| (parser_def |:| char_parser 'c')) ['b';'d';'e';'f'] (Some []));
+
+        (* ( "a" | "b"* ).( "def"* | "c")  *)
+        "Parsec">:: (test_parser ((char_parser 'a' |:| star (char_parser 'b')) |.| (star parser_def |:| char_parser 'c')) ['a';'c'] (Some []));
+        "Parsec">:: (test_parser ((char_parser 'a' |:| star (char_parser 'b')) |.| (star parser_def |:| char_parser 'c')) ['a'; 'a'; 'c'] None);
+        "Parsec">:: (test_parser ((char_parser 'a' |:| star (char_parser 'b')) |.| (star parser_def |:| char_parser 'c')) ['b'; 'b'; 'c'] (Some []));
+        "Parsec">:: (test_parser ((char_parser 'a' |:| star (char_parser 'b')) |.| (star parser_def |:| char_parser 'c')) ['b';'b';'a';'c'] None );
+        "Parsec">:: (test_parser ((char_parser 'a' |:| star (char_parser 'b')) |.| (star parser_def |:| char_parser 'c')) ['a';'d';'e';'f';'d';'e';'f';'d';'e';'f'] (Some []));
+        "Parsec">:: (test_parser ((char_parser 'a' |:| star (char_parser 'b')) |.| (star parser_def |:| char_parser 'c')) ['a';'d';'e';'f';'d';'e';'f';'d';'e';'f';'c'] (Some ['c']));
+        "Parsec">:: (test_parser ((char_parser 'a' |:| star (char_parser 'b')) |.| (star parser_def |:| char_parser 'c')) ['b';'b';'d';'e';'f';'d';'e';'f';'c'] (Some ['c']));
+        "Parsec">:: (test_parser ((char_parser 'a' |:| star (char_parser 'b')) |.| (star parser_def |:| char_parser 'c')) ['b';'b';'a';'d';'e';'f';'c'] None );
+        
     ]
 ;;
 
@@ -123,6 +170,7 @@ let parser_combinator_integration_test =
 let () =
   OUnit2.run_test_tt_main parser_combinator_or_test;
   OUnit2.run_test_tt_main parser_combinator_concat_test;
+  OUnit2.run_test_tt_main parser_combinator_star_test;
   OUnit2.run_test_tt_main parser_combinator_integration_test
 ;;
 
