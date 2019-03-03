@@ -37,3 +37,15 @@ let star a text =
     | Some t -> star_loop a t
     | None -> None
 ;;
+
+(* Reconnais le texte s'il n'est pas ENTIEREMENT reconnu par le parser de toute la séquence*)
+let not a text =
+  match a text with
+  | None -> Some []
+  | Some y -> ( 
+    match y with
+    |[] -> None 
+    | _ -> Some []
+  )  
+;;
+

@@ -127,6 +127,37 @@ let parser_combinator_star_test =
    "Parsec">:: (test_parsec_star_abc ['a'; 'b'; 'c'; 'a'; 'b'; 'c'; 'a'; 'b'; 'd'; 'a'; 'b'; 'c'] (Some ['a'; 'b'; 'd'; 'a'; 'b'; 'c']) );
   ]
 ;;
+(* Ne marche pas car signature différente 
+(* Test de not parse_a" *)
+let test_parsec_not_a text result_expected ctx =
+  let parse_a = char_parser 'a' in
+  let result = not parse_a text in
+  let () = OUnit2.assert_equal result result_expected in
+    ()
+
+(* Test de not parser_abc"  *)
+let test_parsec_not_abc text result_expected ctx =
+  let result = not parser_abc text in
+  let () = OUnit2.assert_equal result result_expected in
+    ()
+
+let parser_combinator_not_test =
+  "Integration test">:::
+  ["Parsec">:: (test_parsec_not_a ['a'] (None) );
+   "Parsec">:: (test_parsec_not_a ['b'] (Some []));
+   "Parsec">:: (test_parsec_not_a ['a';'b'] (Some []) );
+   "Parsec">:: (test_parsec_not_a ['b'; 'a'] (Some []) );
+   "Parsec">:: (test_parsec_not_a ['a'; 'l'; 'a'; 't'; 'a'] (Some []) );
+   "Parsec">:: (test_parsec_not_a ['k'; 't'; 'u'; 'n'; 'a'; 's'; 'm'; 'r'] (Some []) );
+   "Parsec">:: (test_parsec_not_abc ['a'; 'b'; 'c'] (None) );
+   "Parsec">:: (test_parsec_not_abc ['a'; 'a'; 'b'] (Some []));
+   "Parsec">:: (test_parsec_not_abc ['a'; 'b'; 'c'; 'a'] (Some []) );
+   "Parsec">:: (test_parsec_not_abc ['a'; 'b'; 'd'; 'a'; 'b'] (Some []));
+   "Parsec">:: (test_parsec_not_abc ['k'; 't'; 'u'; 'n'; 'a'; 's'; 'm'; 'r'] (Some[]) );
+  ]
+;;
+*)
+
 
 
 
