@@ -1,3 +1,4 @@
+val predicat : (unit->bool) -> string -> string option
 
 (* ------ Infix Operators ------- *)
 val (|:|) : ('a -> 'b option) -> ('a -> 'b option) -> 'a -> 'b option
