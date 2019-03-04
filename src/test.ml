@@ -98,8 +98,39 @@ let parser_combinator_concat_test =
   ]
 ;;
 
-
-
+let test_parsec_predicat f text result_expected ctx=
+	let result=predicat f text in
+	let () = OUnit2.assert_equal result result_expected in
+		()
+(* Test de prédicat*)
+let parser_predicat_test=
+	(*let f =(Random.int 2) mod 2 = 0 in*)
+	let f_1 () = (2 mod 2 )= 0 in
+	let f_2 ()= (1 mod 2 ) = 0 in
+	let f_3 =
+		let count = ref 0 in
+		fun () ->
+			count := !count + 1 ;
+			(!count mod 2) = 0
+	in
+	"Integration test">:::
+	["Parsec">:: (test_parsec_predicat f_1 ['a'] (Some(['a'])));
+	 "Parsec">:: (test_parsec_predicat f_1 ['a';'b'] (Some(['a';'b'])));
+	 "Parsec">:: (test_parsec_predicat f_1 [] (Some([])));
+	 "Parsec">:: (test_parsec_predicat f_2 ['a'] None);
+	 "Parsec">:: (test_parsec_predicat f_2 ['a';'b'] None);
+	 "Parsec">:: (test_parsec_predicat f_2 [] None);
+	 "Parsec">:: (test_parsec_predicat f_3 ['a'] None);
+	 "Parsec">:: (test_parsec_predicat f_3 ['a'] (Some(['a'])));
+	 "Parsec">:: (test_parsec_predicat f_3 [] None);
+	 "Parsec">:: (test_parsec_predicat f_3 [] (Some([])));
+	 "Parsec">:: (test_parsec_predicat f_3 ['a';'b'] None);
+	 "Parsec">:: (test_parsec_predicat f_3 ['a';'b'] (Some(['a';'b'])));
+	 "Parsec">:: (test_parsec_predicat f_3 ['a'; 'b';'c';'d';'e';'f';'g';'h'] None);
+	 "Parsec">:: (test_parsec_predicat f_3 ['a'; 'b';'c';'d';'e';'f';'g';'h'] (Some(['a'; 'b';'c';'d';'e';'f';'g';'h'])));
+	 "Parsec">:: (test_parsec_predicat f_3 ['a';'b'] None);
+	 "Parsec">:: (test_parsec_predicat f_3 ['a';'b'] (Some(['a';'b'])));
+	]
 (* Test de "star parse_a" ( qui doit reconnaître a(star) ) *)
 let test_parsec_star_a text result_expected ctx =
   let parse_a = char_parser 'a' in
@@ -203,6 +234,7 @@ let () =
   OUnit2.run_test_tt_main parser_combinator_or_test;
   OUnit2.run_test_tt_main parser_combinator_concat_test;
   OUnit2.run_test_tt_main parser_combinator_star_test;
-  OUnit2.run_test_tt_main parser_combinator_integration_test
+  OUnit2.run_test_tt_main parser_combinator_integration_test;
+	OUnit2.run_test_tt_main parser_predicat_test;
 ;;
 

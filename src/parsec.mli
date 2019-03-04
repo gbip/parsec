@@ -1,4 +1,4 @@
-val predicat : (unit->bool) -> string -> string option
+val predicat : (unit->bool) -> ('a list) -> ('a list option)
 
 val star : ('a -> 'a option) -> 'a -> 'a option
 
