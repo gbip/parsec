@@ -218,6 +218,7 @@ let () =
   OUnit2.run_test_tt_main parser_combinator_or_test;
   OUnit2.run_test_tt_main parser_combinator_concat_test;
   OUnit2.run_test_tt_main parser_combinator_star_test;
-  OUnit2.run_test_tt_main parser_combinator_integration_test
+  OUnit2.run_test_tt_main parser_combinator_integration_test;
+	OUnit2.run_test_tt_main parser_predicat_test;
 ;;
 
