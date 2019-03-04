@@ -1,5 +1,5 @@
 <!-- $theme: gaia -->
-<!-- $size: 16:9 -->
+<!-- $size: 4:3 -->
 
 <!-- *template: invert -->
 
@@ -64,7 +64,7 @@ val star : ('a -> 'a option) -> 'a -> 'a option
 val star : ('a -> 'a option) -> 'a -> 'a option
 ```
 
-## Exemple
+#### Exemple
 
 ```ocaml
 (* Création *)
@@ -85,7 +85,8 @@ let () = assert_equals result (Some ['b'; 'a'; 'a'])
 
 ```ocaml
 (* Défnition *)
-val (|:|) : ('a -> 'b option) -> ('a -> 'b option) -> 'a -> 'b option
+val (|:|) : ('a -> 'b option) -> 
+	('a -> 'b option) -> 'a -> 'b option
 ```
 --- 
 
@@ -94,11 +95,12 @@ val (|:|) : ('a -> 'b option) -> ('a -> 'b option) -> 'a -> 'b option
 
 ```ocaml
 (* Défnition *)
-val (|:|) : ('a -> 'b option) -> ('a -> 'b option) -> 'a -> 'b option
+val (|:|) : ('a -> 'b option) -> 
+	('a -> 'b option) -> 'a -> 'b option
 ```
 
 
-## Exemple
+#### Exemple
 
 ```ocaml
 (* Création *)
@@ -125,7 +127,7 @@ val not : ('a -> 'a list option) -> 'a -> 'a list option
 ```ocaml
 val not : ('a -> 'a list option) -> 'a -> 'a list option
 ```
-## Exemple
+#### Exemple
 
 ```ocaml
 (* Création *)
@@ -140,7 +142,8 @@ let () = assert_equals result None
 # Combinaison par concaténation
 ```ocaml
 (* définition *)
-val (|.|) : ('a -> 'b option) -> ('b -> 'c option) -> 'a -> 'c option
+val (|.|) : ('a -> 'b option) -> 
+	('b -> 'c option) -> 'a -> 'c option
 ```
 
 
@@ -149,10 +152,11 @@ val (|.|) : ('a -> 'b option) -> ('b -> 'c option) -> 'a -> 'c option
 
 ```ocaml
 (* définition *)
-val (|.|) : ('a -> 'b option) -> ('b -> 'c option) -> 'a -> 'c option
+val (|.|) : ('a -> 'b option) -> 
+	('b -> 'c option) -> 'a -> 'c option
 ```
 
-## Exemple
+#### Exemple
 
 ```ocaml
 (* Création *)
@@ -172,21 +176,20 @@ val predicat : (unit->bool) -> string -> string option
 ```
 ---
 
-# Création d'un parser avec un prédicat
+# Combinaison avec un prédicat
 
 ```ocaml
 val predicat : (unit->bool) -> string -> string option
 ```
 
-## Exemple
+#### Exemple
 
 ```ocaml
 (* Fonction qui alterne vrai et faux *)
-let f=	let count = ref 0 in
-	fun () -> count := !count + 1 ;
+let f=	let count = ref 0 in fun () -> count := !count+1;
 		(!count mod 2) = 0 
 
-let result_1= predicat f ['a','b'] in
+let result_1= predicat f ['a','b'] in 
 	let () = assert_equals result_1 None
 
 let result_2= predicat f ['a','b'] in
@@ -212,7 +215,8 @@ let prs =
 # Exemple
 On utilise le parser pour parser l'expression "adefdefdefc"
 ```ocaml
-let result = prs ['a';'d';'e';'f';'d';'e';'f';'d';'e';'f';'c'] 
+let result =
+	prs ['a';'d';'e';'f';'d';'e';'f';'d';'e';'f';'c'] 
 ```
 `result` vaut :
 ```
