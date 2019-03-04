@@ -1,6 +1,7 @@
 open OUnit2
 open Parsec
 open Printf
+open Text
 
 (*
 Format général des parsers de test :
