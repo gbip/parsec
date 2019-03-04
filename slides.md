@@ -162,20 +162,30 @@ val (|.|) : ('a -> 'b option) -> ('b -> 'c option) -> 'a -> 'c option
 ```
 
 ---
+# Création d'un parser avec un prédicat
 
 ```ocaml
 val predicat : (unit->bool) -> string -> string option
-
-val not : ('a -> 'a list option) -> 'a -> 'a list option
-
-(* ------ Infix Operators ------- *)
-(* OR *)
-val (|:|) : ('a -> 'b option) -> ('a -> 'b option) -> 'a -> 'b option
-
-(* CONCAT *)
-val (|.|) : ('a -> 'b option) -> ('b -> 'c option) -> 'a -> 'c option
-
-(* STAR *)
-val (|*|) :  ('a -> 'a option) -> 'a -> 'a option
-
 ```
+
+## Exemple
+
+```ocaml
+(* Fonction qui alterne vrai et faux *)
+let f=
+	let count = ref 0 in
+	fun () ->
+		count := !count + 1 ;
+		(!count mod 2) = 0 
+;;
+
+let result_1= predicat f ['a','b'] in
+	let () = assert_equals result_1 None
+;;
+
+let result_2= predicat f ['a','b'] in
+	let () = assert_equals result_1 (Some(['a','b']))
+;;
+```
+
+
